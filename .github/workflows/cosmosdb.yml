@@ -1,0 +1,57 @@
+
+name: mystorekeeper infrastructure
+on:
+  push:
+    branches:
+      - dev
+      - stage
+      - prod
+    paths:
+      - cosmosdb/**
+
+jobs:
+
+  # Run job when pushed to development environment
+  DEV:
+    if: ${{ github.ref == 'refs/heads/dev' }}
+    environment: DEV
+    name: Development environment
+    runs-on: ubuntu-22.04
+    steps:
+      - id: A
+        name: checkout repository
+        uses: actions/checkout@2
+      - id: B
+        name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+            client-id: ${{ secrets.AZURE_CLIENT_ID }}
+            tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+            subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - id: C
+        name: Deploy resource group
+        run: |
+          az group create -n vars.RESOURCE_GROUP_NAME -l vars.LOCATION
+
+
+  # Run job when pushed to staging environment
+  STAGE:
+    if: ${{ github.ref == 'refs/heads/stage' }}
+    environment: STAGE
+    name: Staging environment
+    runs-on: ubuntu-22.04
+    steps:
+      - id: A
+        name: checkout repository
+        uses: actions/checkout@2
+
+  # Run job when pushed to production environment
+  PROD:
+    if: ${{ github.ref == 'refs/heads/prod' }}
+    environment: PROD
+    name: Production environment
+    runs-on: ubuntu-22.04
+    steps:
+      - id: A
+        name: checkout repository
+        uses: actions/checkout@2
