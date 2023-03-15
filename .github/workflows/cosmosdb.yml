@@ -6,8 +6,6 @@ on:
       - dev
       - stage
       - prod
-    paths:
-      - cosmosdb/*
 
 jobs:
 
