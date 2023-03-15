@@ -6,7 +6,8 @@ on:
       - dev
       - stage
       - prod
-
+    paths:
+      - "cosmosdb/**"
 jobs:
 
   # Run job when pushed to development environment
@@ -18,7 +19,7 @@ jobs:
     steps:
       - id: A
         name: checkout repository
-        uses: actions/checkout@2
+        uses: actions/checkout@v3
       - id: B
         name: 'Az CLI login'
         uses: azure/login@v1
@@ -46,7 +47,7 @@ jobs:
     steps:
       - id: A
         name: checkout repository
-        uses: actions/checkout@2
+        uses: actions/checkout@v3
 
   # Run job when pushed to production environment
   PROD:
@@ -57,4 +58,4 @@ jobs:
     steps:
       - id: A
         name: checkout repository
-        uses: actions/checkout@2
+        uses: actions/checkout@v3
