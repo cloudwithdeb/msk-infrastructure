@@ -8,6 +8,9 @@ on:
       - prod
     paths:
       - "cosmosdb/**"
+
+  workflow_dispatch:
+  
 jobs:
 
   # Run job when pushed to development environment
