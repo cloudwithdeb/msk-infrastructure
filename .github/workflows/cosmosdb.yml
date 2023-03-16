@@ -93,7 +93,7 @@ jobs:
     defaults:
       run:
         shell: bash
-        working-directory: ./cosmosdb
+        working-directory: ./cosmosdb/dev
     needs: [Global]
     steps:
       - id: A
@@ -164,6 +164,10 @@ jobs:
     environment: STAGE
     name: STAGE ENV
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./cosmosdb/stage
     needs: [Global]
     steps:
       - id: A
@@ -234,6 +238,10 @@ jobs:
     environment: PROD
     name: PROD ENV
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./cosmosdb/prod
     needs: [Global]
     steps:
       - id: A
