@@ -1,5 +1,5 @@
 ## Title
-Deploying Azure CosmosDB In Multlple Environment (dev, stage and prod) using github actions
+How to setup a database on azure having different environment requirements using   `Github Actions`,`Terraform`,`Azure` and `Azure CosmosDB`.
 
 ### Architecture Diagram
 ![Architecture Diagram](./cosmosdb.png)
