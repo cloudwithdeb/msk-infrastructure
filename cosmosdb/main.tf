@@ -1,4 +1,3 @@
-#Deploy cosmosdb database
 module "cosmosdb-mongodb-api" {
   source         = "../modules/cosmosdb"
   tags           = merge(var.tags, { env = var.env })
