@@ -2,7 +2,6 @@
 resource "azurerm_resource_group" "cosmosdb-mongodb-api-resource-group" {
   name     = var.resource-group
   location = var.location
-  tags     = var.tags
 }
 
 resource "azurerm_cosmosdb_account" "cosmosdb-mongodb-api-account" {
@@ -11,9 +10,7 @@ resource "azurerm_cosmosdb_account" "cosmosdb-mongodb-api-account" {
   name                = var.database-name
   offer_type          = "Standard"
   kind                = "MongoDB"
-
   enable_automatic_failover = true
-  tags = var.tags
 
   capabilities {
     name = "EnableAggregationPipeline"

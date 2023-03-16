@@ -1,9 +1,4 @@
-
 variable "subscription" {
-  type = string
-}
-
-variable "resource-group" {
   type = string
 }
 
@@ -12,5 +7,9 @@ variable "location" {
 }
 
 variable "database-name" {
-    type = string
+  type = string
+}
+
+variable "resource-group" {
+  type = string
 }
