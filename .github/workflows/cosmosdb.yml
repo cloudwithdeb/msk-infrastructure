@@ -8,7 +8,8 @@ on:
       - prod
 
 env:
-  COSMOSDB_CONTAINER_NAME: "cosmosdb"
+  COSMOSDB_CONTAINER_NAME: cosmosdb
+  GLOBAL_STORAGE_ACCOUNT_AUTH_MODE: login
 
 jobs:
 
@@ -72,7 +73,8 @@ jobs:
           inlineScript: |
             az storage container create \
             -n ${{ env.COSMOSDB_CONTAINER_NAME }} \
-            --account-name ${{ vars.GLOBAL_STORAGE_ACCOUNT_NAME }}  
+            --account-name ${{ vars.GLOBAL_STORAGE_ACCOUNT_NAME }} \
+            --auth-mode ${{ env.GLOBAL_STORAGE_ACCOUNT_AUTH_MODE }}
 
   # Run job when pushed to staging environment
   STAGE:
