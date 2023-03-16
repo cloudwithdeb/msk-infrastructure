@@ -88,7 +88,7 @@ jobs:
   DEV:
     if: ${{ github.ref == 'refs/heads/dev' }}
     environment: DEV
-    name: DEV ENV
+    name: CosmosDB DEV
     runs-on: ubuntu-22.04
     defaults:
       run:
@@ -162,7 +162,7 @@ jobs:
   STAGE:
     if: ${{ github.ref == 'refs/heads/stage' }}
     environment: STAGE
-    name: STAGE ENV
+    name: CosmosDB STAGE
     runs-on: ubuntu-22.04
     defaults:
       run:
@@ -236,7 +236,7 @@ jobs:
   PROD:
     if: ${{ github.ref == 'refs/heads/prod' }}
     environment: PROD
-    name: PROD ENV
+    name: CosmosDB PROD
     runs-on: ubuntu-22.04
     defaults:
       run:
@@ -290,7 +290,7 @@ jobs:
           -var="location=${{ env.PROD_LOCATION }}" \
           -var="database-name=${{ env.PROD_COSMOSDB_NAME }}" \
           -var="resource-group=${{ env.PROD_COSMOSDB_RESOURCE_GROUP }}" \
-          -var="subscription=${{ secrets.ARM_SUBSCRIPTION_ID }}"
+          -var="subscription=${{ secrets.ARM_SUBSCRIPTION_ID }}"  
       - id: F
         name: terraform apply
         env:
