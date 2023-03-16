@@ -8,6 +8,7 @@ on:
       - prod
     paths:
       - "cosmosdb/**"
+      - "modules/cosmosdb/**"
 
 env:
 
@@ -20,19 +21,16 @@ env:
   GLOBAL_LOCATION: eastus2
 
   #Define Dev Environment
-  DEV_ENV: dev
   DEV_LOCATION: eastus2
   DEV_COSMOSDB_NAME: "msk-dev"
   DEV_COSMOSDB_RESOURCE_GROUP: "rg-dev-cosmosdb"
   
   #Define Stage Environment
-  STAGE_ENV: stage
   STAGE_LOCATION: eastus
   STAGE_COSMOSDB_NAME: "msk-stage"
   STAGE_COSMOSDB_RESOURCE_GROUP: "rg-stage-cosmosdb"
 
   #Define Prod Environment
-  PROD_ENV: "prod"
   PROD_LOCATION: westeurope
   PROD_COSMOSDB_NAME: "msk-prod"
   PROD_COSMOSDB_RESOURCE_GROUP: "rg-prod-cosmosdb"
@@ -119,7 +117,7 @@ jobs:
       - id: F
         name: terraform plan
         run: |
-          terraform validate -backend-config="storage_account_name=${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }}" -backend-config="container_name=${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }}" -backend-config="resource_group_name=${{ env.GLOBAL_RESOURCE_GROUP_NAME }}" -var="location=${{ env.DEV_LOCATION }}" -var="database-name=${{ env.DEV_COSMOSDB_NAME }}" -var="resource-group=${{ env.DEV_COSMOSDB_RESOURCE_GROUP }}" -var="subscription=${{ secrets.SUBSCRIPTION_ID }}" -var="env=${{ env.DEV_ENV }} -var="tags=''"
+          terraform validate -backend-config="storage_account_name=${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }}" -backend-config="container_name=${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }}" -backend-config="resource_group_name=${{ env.GLOBAL_RESOURCE_GROUP_NAME }}" -var="location=${{ env.DEV_LOCATION }}" -var="database-name=${{ env.DEV_COSMOSDB_NAME }}" -var="resource-group=${{ env.DEV_COSMOSDB_RESOURCE_GROUP }}" -var="subscription=${{ secrets.SUBSCRIPTION_ID }}"
 
   # Run job when pushed to staging environment
   STAGE:
