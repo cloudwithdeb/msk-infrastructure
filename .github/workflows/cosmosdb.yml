@@ -6,6 +6,8 @@ on:
       - dev
       - stage
       - prod
+    paths:
+      - "cosmosdb/**"
 
 env:
 
@@ -63,6 +65,16 @@ jobs:
             -g ${{ env.GLOBAL_RESOURCE_GROUP_NAME }} \
             -l ${{ env.GLOBAL_LOCATION }} \
             --sku ${{ env.GLOBAL_STORAGE_ACCOUNT_SKU }}
+      - id: E
+        name: Create storage container
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az storage container create \
+            -n ${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }} \
+            --account-name ${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }} \
+            --auth-mode ${{ env.GLOBAL_STORAGE_ACCOUNT_AUTH_MODE }}
 
   # Run job when pushed to development environment
   DEV:
@@ -80,16 +92,6 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - id: C
-        name: Create storage container
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.30.0
-          inlineScript: |
-            az storage container create \
-            -n ${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }} \
-            --account-name ${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }} \
-            --auth-mode ${{ env.GLOBAL_STORAGE_ACCOUNT_AUTH_MODE }}
 
   # Run job when pushed to staging environment
   STAGE:
@@ -107,16 +109,6 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - id: C
-        name: Create storage container
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.30.0
-          inlineScript: |
-            az storage container create \
-            -n ${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }} \
-            --account-name ${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }} \
-            --auth-mode ${{ env.GLOBAL_STORAGE_ACCOUNT_AUTH_MODE }}
 
   # Run job when pushed to production environment
   PROD:
@@ -134,13 +126,3 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-      - id: C
-        name: Create storage container
-        uses: azure/CLI@v1
-        with:
-          azcliversion: 2.30.0
-          inlineScript: |
-            az storage container create \
-            -n ${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }} \
-            --account-name ${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }} \
-            --auth-mode ${{ env.GLOBAL_STORAGE_ACCOUNT_AUTH_MODE }}
