@@ -1,4 +1,4 @@
-# CosmosDB MongoDB API
+
 module "cosmosdb-mongodb-api" {
   source         = "../modules/cosmosdb"
   resource-group = var.resource-group
