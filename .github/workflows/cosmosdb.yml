@@ -7,10 +7,6 @@ on:
       - stage
       - prod
 
-permissions:
-      id-token: write
-      contents: read
-
 jobs:
 
   # Run job when pushed to development environment
