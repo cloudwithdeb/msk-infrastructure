@@ -6,14 +6,10 @@ variable "location" {
   type = string
 }
 
-variable "tags" {
-  type = map(string)
-}
-
-variable "env" {
+variable "database-name" {
   type = string
 }
 
-variable "database-name" {
+variable "resource-group" {
   type = string
 }
