@@ -8,8 +8,23 @@ on:
       - prod
 
 env:
-  COSMOSDB_CONTAINER_NAME: cosmosdb
+
+  #Define Global Environment
+  GLOBAL_STORAGE_ACCOUNT_NAME: dspglobalconfigurations
+  GLOBAL_RESOURCE_GROUP_NAME: rg-global-configurations
+  GLOBAL_STORAGE_ACCOUNT_SKU: Standard_ZRS
+  GLOBAL_COSMOSDB_CONTAINER_NAME: cosmosdb
   GLOBAL_STORAGE_ACCOUNT_AUTH_MODE: login
+  GLOBAL_LOCATION: eastus2
+
+  #Define Dev Environment
+  DEV_LOCATION: eastus2
+
+  #Define Stage Environment
+  STAGE_LOCATION: eastus
+
+  #Define Prod Environment
+  PROD_LOCATION: westeurope
 
 jobs:
 
@@ -35,8 +50,8 @@ jobs:
           azcliversion: 2.30.0
           inlineScript: |
             az group create \
-            -n ${{ vars.GLOBAL_RESOURCE_GROUP_NAME }} \
-            -l ${{ vars.GLOBAL_LOCATION }}
+            -n ${{ env.GLOBAL_RESOURCE_GROUP_NAME }} \
+            -l ${{ env.GLOBAL_LOCATION }}
       - id: D
         name: Create storage account
         uses: azure/CLI@v1
@@ -44,10 +59,10 @@ jobs:
           azcliversion: 2.30.0
           inlineScript: |
             az storage account create \
-            -n ${{ vars.GLOBAL_STORAGE_ACCOUNT_NAME }} \
-            -g ${{ vars.GLOBAL_RESOURCE_GROUP_NAME }} \
-            -l ${{ vars.GLOBAL_LOCATION }} \
-            --sku ${{ vars.GLOBAL_STORAGE_ACCOUNT_SKU }}
+            -n ${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }} \
+            -g ${{ env.GLOBAL_RESOURCE_GROUP_NAME }} \
+            -l ${{ env.GLOBAL_LOCATION }} \
+            --sku ${{ env.GLOBAL_STORAGE_ACCOUNT_SKU }}
 
   # Run job when pushed to development environment
   DEV:
@@ -72,8 +87,8 @@ jobs:
           azcliversion: 2.30.0
           inlineScript: |
             az storage container create \
-            -n ${{ env.COSMOSDB_CONTAINER_NAME }} \
-            --account-name ${{ vars.GLOBAL_STORAGE_ACCOUNT_NAME }} \
+            -n ${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }} \
+            --account-name ${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }} \
             --auth-mode ${{ env.GLOBAL_STORAGE_ACCOUNT_AUTH_MODE }}
 
   # Run job when pushed to staging environment
@@ -92,7 +107,16 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
+      - id: C
+        name: Create storage container
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az storage container create \
+            -n ${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }} \
+            --account-name ${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }} \
+            --auth-mode ${{ env.GLOBAL_STORAGE_ACCOUNT_AUTH_MODE }}
 
   # Run job when pushed to production environment
   PROD:
@@ -110,4 +134,13 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
-
+      - id: C
+        name: Create storage container
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az storage container create \
+            -n ${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }} \
+            --account-name ${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }} \
+            --auth-mode ${{ env.GLOBAL_STORAGE_ACCOUNT_AUTH_MODE }}
