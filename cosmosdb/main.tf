@@ -1,4 +1,3 @@
-# Deploy cosmosdb database mongodb api
 module "cosmosdb-mongodb-api" {
   source         = "../modules/cosmosdb"
   resource-group = var.resource-group

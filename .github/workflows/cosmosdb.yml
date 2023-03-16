@@ -117,7 +117,7 @@ jobs:
       - id: F
         name: terraform plan
         run: |
-          terraform validate -backend-config="storage_account_name=${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }}" -backend-config="container_name=${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }}" -backend-config="resource_group_name=${{ env.GLOBAL_RESOURCE_GROUP_NAME }}" -var="location=${{ env.DEV_LOCATION }}" -var="database-name=${{ env.DEV_COSMOSDB_NAME }}" -var="resource-group=${{ env.DEV_COSMOSDB_RESOURCE_GROUP }}" -var="subscription=${{ secrets.SUBSCRIPTION_ID }}"
+          terraform plan -backend-config="storage_account_name=${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }}" -backend-config="container_name=${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }}" -backend-config="resource_group_name=${{ env.GLOBAL_RESOURCE_GROUP_NAME }}" -var="location=${{ env.DEV_LOCATION }}" -var="database-name=${{ env.DEV_COSMOSDB_NAME }}" -var="resource-group=${{ env.DEV_COSMOSDB_RESOURCE_GROUP }}" -var="subscription=${{ secrets.SUBSCRIPTION_ID }}"
 
   # Run job when pushed to staging environment
   STAGE:
