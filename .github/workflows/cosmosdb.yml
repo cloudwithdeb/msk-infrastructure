@@ -31,7 +31,7 @@ jobs:
           azcliversion: 2.30.0
           inlineScript: |
             az group create \
-            -n ${{ vars.RESOURCE_GROUP_NAME }} \
+            -n ${{ vars.CONF_RESOURCE_GROUP_NAME }} \
             -l ${{ vars.LOCATION }}
 
 
