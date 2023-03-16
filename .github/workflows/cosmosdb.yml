@@ -7,6 +7,9 @@ on:
       - stage
       - prod
 
+env:
+  COSMOSDB_CONTAINER_NAME: "cosmosdb"
+
 jobs:
 
   # Run job when pushed to dev, stage and prod
@@ -62,9 +65,14 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - id: C
-        name: deploy cosmosdb
-        run: echo "Hello World!"
-
+        name: Create storage container
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az storage container create \
+            -n ${{ env.COSMOSDB_CONTAINER_NAME }} \
+            --account-name ${{ vars.GLOBAL_STORAGE_ACCOUNT_NAME }}  
 
   # Run job when pushed to staging environment
   STAGE:
