@@ -6,10 +6,63 @@ on:
       - dev
       - stage
       - prod
-    paths:
-      - cosmosdb/**
+
+env:
+
+  #Define Global Environment
+  GLOBAL_STORAGE_ACCOUNT_NAME: dspglobalconfigurations
+  GLOBAL_RESOURCE_GROUP_NAME: rg-global-configurations
+  GLOBAL_STORAGE_ACCOUNT_SKU: Standard_ZRS
+  GLOBAL_COSMOSDB_CONTAINER_NAME: cosmosdb
+  GLOBAL_STORAGE_ACCOUNT_AUTH_MODE: login
+  GLOBAL_LOCATION: eastus2
+
+  #Define Dev Environment
+  DEV_LOCATION: eastus2
+
+  #Define Stage Environment
+  STAGE_LOCATION: eastus
+
+  #Define Prod Environment
+  PROD_LOCATION: westeurope
 
 jobs:
+
+  # Run job when pushed to dev, stage and prod
+  Global:
+    if: ${{ github.ref != 'refs/heads/main' || github.ref == 'refs/heads/master' }}
+    name: Global environment
+    environment: GLOBAL
+    runs-on: ubuntu-22.04
+    steps:
+      - id: A
+        name: checkout repository
+        uses: actions/checkout@v3
+      - id: B
+        name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - id: C
+        name: Create resource group
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az group create \
+            -n ${{ env.GLOBAL_RESOURCE_GROUP_NAME }} \
+            -l ${{ env.GLOBAL_LOCATION }}
+      - id: D
+        name: Create storage account
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az storage account create \
+            -n ${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }} \
+            -g ${{ env.GLOBAL_RESOURCE_GROUP_NAME }} \
+            -l ${{ env.GLOBAL_LOCATION }} \
+            --sku ${{ env.GLOBAL_STORAGE_ACCOUNT_SKU }}
 
   # Run job when pushed to development environment
   DEV:
@@ -17,22 +70,26 @@ jobs:
     environment: DEV
     name: Development environment
     runs-on: ubuntu-22.04
+    needs: [Global]
     steps:
       - id: A
         name: checkout repository
-        uses: actions/checkout@2
+        uses: actions/checkout@v3
       - id: B
         name: 'Az CLI login'
         uses: azure/login@v1
         with:
-            client-id: ${{ secrets.AZURE_CLIENT_ID }}
-            tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-            subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
       - id: C
-        name: Deploy resource group
-        run: |
-          az group create -n vars.RESOURCE_GROUP_NAME -l vars.LOCATION
-
+        name: Create storage container
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az storage container create \
+            -n ${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }} \
+            --account-name ${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }} \
+            --auth-mode ${{ env.GLOBAL_STORAGE_ACCOUNT_AUTH_MODE }}
 
   # Run job when pushed to staging environment
   STAGE:
@@ -40,10 +97,26 @@ jobs:
     environment: STAGE
     name: Staging environment
     runs-on: ubuntu-22.04
+    needs: [Global]
     steps:
       - id: A
         name: checkout repository
-        uses: actions/checkout@2
+        uses: actions/checkout@v3
+      - id: B
+        name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - id: C
+        name: Create storage container
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az storage container create \
+            -n ${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }} \
+            --account-name ${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }} \
+            --auth-mode ${{ env.GLOBAL_STORAGE_ACCOUNT_AUTH_MODE }}
 
   # Run job when pushed to production environment
   PROD:
@@ -51,7 +124,23 @@ jobs:
     environment: PROD
     name: Production environment
     runs-on: ubuntu-22.04
+    needs: [Global]
     steps:
       - id: A
         name: checkout repository
-        uses: actions/checkout@2
+        uses: actions/checkout@v3
+      - id: B
+        name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - id: C
+        name: Create storage container
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az storage container create \
+            -n ${{ env.GLOBAL_COSMOSDB_CONTAINER_NAME }} \
+            --account-name ${{ env.GLOBAL_STORAGE_ACCOUNT_NAME }} \
+            --auth-mode ${{ env.GLOBAL_STORAGE_ACCOUNT_AUTH_MODE }}
