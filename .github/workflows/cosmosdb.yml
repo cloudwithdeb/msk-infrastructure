@@ -9,11 +9,11 @@ on:
 
 jobs:
 
-  # Run job when pushed to development environment
-  DEV:
-    if: ${{ github.ref == 'refs/heads/dev' }}
-    environment: DEV
-    name: Development environment
+  # Run job when pushed to dev, stage and prod
+  Global:
+    if: ${{ github.ref != 'refs/heads/main' || github.ref == 'refs/heads/master' }}
+    name: Global environment
+    environment: GLOBAL
     runs-on: ubuntu-22.04
     steps:
       - id: A
@@ -25,14 +25,45 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       - id: C
-        name: Azure CLI script
+        name: Create resource group
         uses: azure/CLI@v1
         with:
           azcliversion: 2.30.0
           inlineScript: |
             az group create \
-            -n ${{ vars.CONF_RESOURCE_GROUP_NAME }} \
-            -l ${{ vars.LOCATION }}
+            -n ${{ vars.GLOBAL_RESOURCE_GROUP_NAME }} \
+            -l ${{ vars.GLOBAL_LOCATION }}
+      - id: D
+        name: Create storage account
+        uses: azure/CLI@v1
+        with:
+          azcliversion: 2.30.0
+          inlineScript: |
+            az storage account create \
+            -n ${{ vars.GLOBAL_STORAGE_ACCOUNT_NAME }} \
+            -g ${{ vars.GLOBAL_RESOURCE_GROUP_NAME }} \
+            -l ${{ vars.GLOBAL_LOCATION }} \
+            --sku ${{ vars.GLOBAL_STORAGE_ACCOUNT_SKU }}
+
+  # Run job when pushed to development environment
+  DEV:
+    if: ${{ github.ref == 'refs/heads/dev' }}
+    environment: DEV
+    name: Development environment
+    runs-on: ubuntu-22.04
+    needs: [Global]
+    steps:
+      - id: A
+        name: checkout repository
+        uses: actions/checkout@v3
+      - id: B
+        name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      - id: C
+        name: deploy cosmosdb
+        run: echo "Hello World!"
 
 
   # Run job when pushed to staging environment
@@ -41,10 +72,17 @@ jobs:
     environment: STAGE
     name: Staging environment
     runs-on: ubuntu-22.04
+    needs: [Global]
     steps:
       - id: A
         name: checkout repository
         uses: actions/checkout@v3
+      - id: B
+        name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
 
   # Run job when pushed to production environment
   PROD:
@@ -52,7 +90,14 @@ jobs:
     environment: PROD
     name: Production environment
     runs-on: ubuntu-22.04
+    needs: [Global]
     steps:
       - id: A
         name: checkout repository
         uses: actions/checkout@v3
+      - id: B
+        name: 'Az CLI login'
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
