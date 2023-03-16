@@ -89,6 +89,10 @@ jobs:
     environment: DEV
     name: Development environment
     runs-on: ubuntu-22.04
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./cosmosdb
     needs: [Global]
     steps:
       - id: A
