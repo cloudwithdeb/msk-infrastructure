@@ -13,3 +13,7 @@ variable "tags" {
 variable "env" {
   type = string
 }
+
+variable "database-name" {
+  type = string
+}

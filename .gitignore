@@ -1,0 +1,3 @@
+secrets.tfvars
+cosmosdb/.terraform
+cosmosdb/.terraform.lock.hcl
